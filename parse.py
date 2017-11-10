@@ -71,6 +71,6 @@ with open('oct_sample_data.csv') as csv_data:
             row[30] = 'A4'
 
         if row[34]:
-            print row[34], row[7], row[27:31]
+            print row[34], row[7].strip(), row[10:12], row[27:31]
 
-    print csv_list[665][34], csv_list[665][7].strip(), csv_list[665][27:31]
+    # print csv_list[665][34], csv_list[665][7].strip(), csv_list[665][27:31]
