@@ -65,6 +65,7 @@ class SKU():
 
     def __str__(self):
         return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.views, self.date)
+        
 
 with open('oct_sample_data.csv') as csv_data:
     csvfile = csv.reader(csv_data)
