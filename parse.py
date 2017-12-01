@@ -50,27 +50,46 @@ import csv
 # (47, 'VIDEO RUN TIME')
 # (48, '')
 
+# Feature(R): SKU
+# STL: SKU_ASTL
+# All additional alts: SKU_A1, SKU_A2, etc
+# C2/C3: SKU_COLOR, SKU_COLORTWO, etc
+
+class SKU():
+    def __init__(self, sku, feature_color, alt_colors, views, date):
+        self.sku = sku
+        self.feature_color = feature_color
+        self.alt_colors = alt_colors
+        self.views = views
+        self.date = date
+
+    def __str__(self):
+        return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.views, self.date)
+
 with open('oct_sample_data.csv') as csv_data:
     csvfile = csv.reader(csv_data)
     csv_list = [row for row in csvfile]
+
+    test_sku = SKU(csv_list[100][7], csv_list[100][10], csv_list[100][11], csv_list[100][25:33], csv_list[100][34])
+    print(test_sku)
     #headers_numbered = enumerate(csv_list[2])
 
-    A1, A2, A3, A4 = '', '', '', ''
+    # A1, A2, A3, A4 = '', '', '', ''
 
-    for row in csv_list:
-        if row[27] != '':
-            row[27] = 'A1'
+    # for row in csv_list:
+    #     if row[27] != '':
+    #         row[27] = 'A1'
 
-        if row[28] != '':
-            row[28] = 'A2'
+    #     if row[28] != '':
+    #         row[28] = 'A2'
 
-        if row[29] != '':
-            row[29] = 'A3'
+    #     if row[29] != '':
+    #         row[29] = 'A3'
 
-        if row[30] != '':
-            row[30] = 'A4'
+    #     if row[30] != '':
+    #         row[30] = 'A4'
 
-        if row[34]:
-            print row[34], row[7].strip(), row[10:12], row[27:31]
+    #     if row[34]:
+    #         print row[34], row[7].strip(), row[10:12], row[27:31]
 
     # print csv_list[665][34], csv_list[665][7].strip(), csv_list[665][27:31]
