@@ -62,7 +62,7 @@ class SKU():
 
     def __init__(self, sku, feature_color, alt_colors, views, date):
         self.sku = sku
-        self.feature_color = feature_color
+        self.feature_color = feature_color.replace(' ', '')
         self.alt_colors = alt_colors
         self.views = views
         self.view_names = [
@@ -101,14 +101,17 @@ class SKU():
                     output = '{}_{}.tiff'.format(self.sku, self.feature_color)
                 else:
                     output = '{}.tiff'.format(self.sku)
-                self.file_names.append(output)
+
             else:
                 output = '{}_{}.tiff'.format(self.sku, view)
-                self.file_names.append(output)
-        print(self.file_names)
+
+            self.file_names.append(output)
+        return self.file_names
 
     def __str__(self):
         return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
+
+session_files = []
 
 with open('csv.csv') as csv_data:
     csvfile = csv.reader(csv_data)
@@ -116,26 +119,10 @@ with open('csv.csv') as csv_data:
 
     for shot_sku in csv_list:
         test_sku = SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34])
-        test_sku.generate_filenames()
+        file_names = test_sku.generate_filenames()
+        if file_names:
+            for name in file_names:
+                session_files.append(name)
 
-    #headers_numbered = enumerate(csv_list[2])
-
-    # A1, A2, A3, A4 = '', '', '', ''
-
-    # for row in csv_list:
-    #     if row[27] != '':
-    #         row[27] = 'A1'
-
-    #     if row[28] != '':
-    #         row[28] = 'A2'
-
-    #     if row[29] != '':
-    #         row[29] = 'A3'
-
-    #     if row[30] != '':
-    #         row[30] = 'A4'
-
-    #     if row[34]:
-    #         print row[34], row[7].strip(), row[10:12], row[27:31]
-
-    # print csv_list[665][34], csv_list[665][7].strip(), csv_list[665][27:31]
+for name in session_files:
+    print(name)
