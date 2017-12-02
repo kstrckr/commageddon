@@ -56,23 +56,68 @@ import csv
 # C2/C3: SKU_COLOR, SKU_COLORTWO, etc
 
 class SKU():
+
+    '''Base SKU class, handles building file names for each SKU'''
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, sku, feature_color, alt_colors, views, date):
         self.sku = sku
         self.feature_color = feature_color
         self.alt_colors = alt_colors
         self.views = views
+        self.view_names = [
+            ['R', False],
+            ['ASTL', False],
+            ['A1', False],
+            ['A2', False],
+            ['A3', False],
+            ['A4', False],
+            ['C2', False],
+            ['C3', False],
+            ['V', False],
+        ]
+        self.shot_views = []
+        self.file_names = []
         self.date = date
 
-    def __str__(self):
-        return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.views, self.date)
-        
+        self.set_variant_naming()
+        self.set_shot_views()
 
-with open('oct_sample_data.csv') as csv_data:
+    def set_variant_naming(self):
+        for idx, shot_view in enumerate(self.views):
+            if shot_view != '':
+                self.view_names[idx][1] = True
+
+    def set_shot_views(self):
+        for view in self.view_names:
+            if view[1] == True:
+                self.shot_views.append(view[0])
+
+    def generate_filenames(self):
+        for view in self.shot_views[:-1]:
+            output = ''
+            if view == 'R':
+                if self.feature_color != '':
+                    output = '{}_{}.tiff'.format(self.sku, self.feature_color)
+                else:
+                    output = '{}.tiff'.format(self.sku)
+                self.file_names.append(output)
+            else:
+                output = '{}_{}.tiff'.format(self.sku, view)
+                self.file_names.append(output)
+        print(self.file_names)
+
+    def __str__(self):
+        return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
+
+with open('csv.csv') as csv_data:
     csvfile = csv.reader(csv_data)
     csv_list = [row for row in csvfile]
 
-    test_sku = SKU(csv_list[100][7], csv_list[100][10], csv_list[100][11], csv_list[100][25:33], csv_list[100][34])
-    print(test_sku)
+    for shot_sku in csv_list:
+        test_sku = SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34])
+        test_sku.generate_filenames()
+
     #headers_numbered = enumerate(csv_list[2])
 
     # A1, A2, A3, A4 = '', '', '', ''
