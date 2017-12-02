@@ -90,7 +90,7 @@ class SKU():
 
     def set_shot_views(self):
         for view in self.view_names:
-            if view[1] == True:
+            if view[1] is True:
                 self.shot_views.append(view[0])
 
     def generate_filenames(self):
