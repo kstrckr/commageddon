@@ -1,4 +1,5 @@
 import csv
+import re
 
 # (0, 'CATEGORY')
 # (1, 'Pictures')
@@ -61,9 +62,9 @@ class SKU():
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self, sku, feature_color, alt_colors, views, date):
-        self.sku = sku
-        self.feature_color = feature_color.replace(' ', '')
-        self.alt_colors = alt_colors
+        self.sku = sku.strip()
+        self.feature_color = re.sub(r'[^\w]', '', feature_color.upper())
+        self.alt_colors = alt_colors.split(',')
         self.views = views
         self.view_names = [
             ['R', False],
@@ -80,8 +81,17 @@ class SKU():
         self.file_names = []
         self.date = date
 
+        # self.clean_colornames
+
         self.set_variant_naming()
         self.set_shot_views()
+
+    # def clean_colornames(self):
+    #     self.feature_color = re.sub(r'[^\w]', '', self.feature_color.upper())
+
+    #     for color in self.alt_colors:
+    #         if color != '':
+    #             color = re.sub(r'[^\w]', '', color.replace(' ', '').upper())
 
     def set_variant_naming(self):
         for idx, shot_view in enumerate(self.views):
@@ -89,6 +99,12 @@ class SKU():
                 self.view_names[idx][1] = True
 
     def set_shot_views(self):
+
+        if self.alt_colors != '':
+            for color in self.alt_colors:
+                if color != '':
+                    self.shot_views.append(re.sub(r'[^\w]', '', color.replace(' ', '')))
+
         for view in self.view_names:
             if view[1] is True:
                 self.shot_views.append(view[0])
@@ -98,14 +114,18 @@ class SKU():
             output = ''
             if view == 'R':
                 if self.feature_color != '':
-                    output = '{}_{}.tiff'.format(self.sku, self.feature_color)
+                    output = '{}_{}.tif'.format(self.sku, self.feature_color)
                 else:
-                    output = '{}.tiff'.format(self.sku)
+                    output = '{}.tif'.format(self.sku)
+
+            elif view == 'C2'or view == 'C3':
+                pass
 
             else:
-                output = '{}_{}.tiff'.format(self.sku, view)
+                output = '{}_{}.tif'.format(self.sku, view)
 
-            self.file_names.append(output)
+            if output:
+                self.file_names.append(output)
         return self.file_names
 
     def __str__(self):
