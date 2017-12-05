@@ -134,16 +134,21 @@ class SKU():
     def __str__(self):
         return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
 
-session_skus = []
-session_files = []
 
-with open('csv.csv') as csv_data:
-    csvfile = csv.reader(csv_data)
-    csv_list = [row for row in csvfile]
+def output_expected_filenames(csv_path):
 
-    for shot_sku in csv_list:
-        session_skus.append(SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34]))
+    session_skus = []
+    session_files = []
 
-    for sku in session_skus:
-        if sku.file_names:
-            print('{} - {}'.format(sku.sku, sku.file_names))
+    with open(csv_path) as csv_data:
+        csvfile = csv.reader(csv_data)
+        csv_list = [row for row in csvfile]
+
+        for shot_sku in csv_list:
+            session_skus.append(SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34]))
+
+        for sku in session_skus:
+            if sku.file_names:
+                print('{} - {}'.format(sku.sku, sku.file_names))
+
+output_expected_filenames('csv.csv')
