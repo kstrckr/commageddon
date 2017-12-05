@@ -85,6 +85,9 @@ class SKU():
 
         self.set_variant_naming()
         self.set_shot_views()
+        self.generate_filenames()
+
+        
 
     # def clean_colornames(self):
     #     self.feature_color = re.sub(r'[^\w]', '', self.feature_color.upper())
@@ -103,7 +106,7 @@ class SKU():
         if self.alt_colors != '':
             for color in self.alt_colors:
                 if color != '':
-                    self.shot_views.append(re.sub(r'[^\w]', '', color.replace(' ', '')))
+                    self.shot_views.append(re.sub(r'[^\w]', '', color.replace(' ', '').upper()))
 
         for view in self.view_names:
             if view[1] is True:
@@ -126,7 +129,7 @@ class SKU():
 
             if output:
                 self.file_names.append(output)
-        return self.file_names
+        #return self.file_names
 
     def __str__(self):
         return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
@@ -139,11 +142,8 @@ with open('csv.csv') as csv_data:
     csv_list = [row for row in csvfile]
 
     for shot_sku in csv_list:
-        test_sku = SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34])
-        file_names = test_sku.generate_filenames()
-        if file_names:
-            for name in file_names:
-                session_files.append(name)
+        session_skus.append(SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34]))
 
-for name in session_files:
-    print(name)
+    for sku in session_skus:
+        if sku.file_names:
+            print('{} - {}'.format(sku.sku, sku.file_names))
