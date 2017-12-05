@@ -131,6 +131,7 @@ class SKU():
     def __str__(self):
         return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
 
+session_skus = []
 session_files = []
 
 with open('csv.csv') as csv_data:
