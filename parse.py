@@ -1,5 +1,6 @@
 import csv
 import re
+import os
 
 # (0, 'CATEGORY')
 # (1, 'Pictures')
@@ -135,7 +136,7 @@ class SKU():
         return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
 
 
-def output_expected_filenames(csv_path):
+def generate_expected_filenames(csv_path):
 
     session_skus = []
     session_files = []
@@ -144,11 +145,28 @@ def output_expected_filenames(csv_path):
         csvfile = csv.reader(csv_data)
         csv_list = [row for row in csvfile]
 
-        for shot_sku in csv_list:
+        for shot_sku in csv_list[3:]:
             session_skus.append(SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34]))
 
         for sku in session_skus:
-            if sku.file_names:
-                print('{} - {}'.format(sku.sku, sku.file_names))
+            # if sku.file_names:
+            #     for filename in sku.file_names:
+            #         session_files.append(filename)
+            print('{} - {}'.format(sku.sku, sku.file_names))
+        # return set(session_files)
 
-output_expected_filenames('csv.csv')
+def read_filenames_from_path(path):
+    filenames = []
+    for file in os.listdir(path):
+        if file[0] != '.':
+            filenames.append(file)
+    return set(filenames)
+
+expected_filenames = generate_expected_filenames('nynov.csv')
+todays_filenames = read_filenames_from_path('/Volumes/kycreative/_TEAM/Kurt/commageddon/files')
+
+# missing_files = todays_filenames - expected_filenames
+
+# print(len(todays_filenames), len(missing_files))
+# for file in expected_filenames:
+#     print(file)
