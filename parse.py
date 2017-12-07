@@ -118,7 +118,15 @@ class SKU():
     def generate_filenames(self):
         for shot in self.generated_shots:
             output = ''
-            if shot != 'R':
+            if shot == 'R':
+                pass
+            elif shot == 'C2':
+                pass
+            elif shot == 'C3':
+                pass
+            elif shot == 'V':
+                pass
+            else:
                 output = '{}_{}.tif'.format(self.sku, shot)
             if output != '':
                 self.generated_filenames.append(output)
@@ -137,7 +145,8 @@ def generate_expected_filenames(csv_path):
         csv_list = [row for row in csvfile]
 
         for shot_sku in csv_list[3:]:
-            session_skus.append(SKU(shot_sku))
+            if shot_sku[7] != '':
+                session_skus.append(SKU(shot_sku))
 
         for sku in session_skus:
             print(sku)
