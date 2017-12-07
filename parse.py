@@ -62,56 +62,26 @@ class SKU():
     '''Base SKU class, handles building file names for each SKU'''
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, sku, feature_color, alt_colors, views, date):
-        self.sku = sku.strip()
-        self.feature_color = re.sub(r'[^\w]', '', feature_color.upper())
-        self.alt_colors = alt_colors.split(',')
-        self.views = views
-        self.view_names = [
-            ['R', False],
-            ['ASTL', False],
-            ['A1', False],
-            ['A2', False],
-            ['A3', False],
-            ['A4', False],
-            ['C2', False],
-            ['C3', False],
-            ['V', False],
-        ]
-        self.shot_views = []
-        self.file_names = []
-        self.date = date
+    def __init__(self, csv_line):
 
-        # self.clean_colornames
+        self.sku = csv_line[7]
+        self.feature_color = re.sub(r'[^\w]', '', csv_line[10].upper())
+        self.alt_colors_raw = csv_line[11].split(',')
+        self.alt_colors_clean = []
+        self.alt_views = csv_line[12:16]
+        self.shot_views = csv_line[25:34]
+        self.feature_colors_shot = csv_line[36]
+        self.alt_colors_shot = int(csv_line[37])
+        self.shoot_date = csv_line[34]
+        self.generated_filenames = []
 
-        self.set_variant_naming()
-        self.set_shot_views()
+        self.clean_alt_colors()
         self.generate_filenames()
 
-        
-
-    # def clean_colornames(self):
-    #     self.feature_color = re.sub(r'[^\w]', '', self.feature_color.upper())
-
-    #     for color in self.alt_colors:
-    #         if color != '':
-    #             color = re.sub(r'[^\w]', '', color.replace(' ', '').upper())
-
-    def set_variant_naming(self):
-        for idx, shot_view in enumerate(self.views):
-            if shot_view != '':
-                self.view_names[idx][1] = True
-
-    def set_shot_views(self):
-
-        if self.alt_colors != '':
-            for color in self.alt_colors:
-                if color != '':
-                    self.shot_views.append(re.sub(r'[^\w]', '', color.replace(' ', '').upper()))
-
-        for view in self.view_names:
-            if view[1] is True:
-                self.shot_views.append(view[0])
+    def clean_alt_colors(self):
+        for color in self.alt_colors_raw:
+            clean_color = re.sub(r'[\w]', '', clean_color)
+            self.alt_colors_clean.append(clean_color)
 
     def generate_filenames(self):
         for view in self.shot_views[:-1]:
