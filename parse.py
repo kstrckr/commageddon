@@ -146,7 +146,13 @@ def generate_expected_filenames(csv_path):
 
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
-                session_skus.append(SKU(shot_sku))
+                if shot_sku[18] == '11/07/17':
+                    session_skus.append(SKU(shot_sku))
+                elif shot_sku[18] == '11/7/2017':
+                    session_skus.append(SKU(shot_sku))
+                else:
+                    pass
+
 
         # for sku in session_skus:
         #     print(sku)
@@ -155,17 +161,7 @@ def generate_expected_filenames(csv_path):
             if sku.generated_filenames:
                 for filename in sku.generated_filenames:
                     session_files.append(filename)
-        print(len(session_files))
         return set(session_files)
-
-        
-
-expected_files = generate_expected_filenames('nynov.csv')
-print(len(expected_files))
-
-# for file in expected_files:
-#     print(file)
-
 
 
 
@@ -176,11 +172,18 @@ def read_filenames_from_path(path):
             filenames.append(file)
     return set(filenames)
 
-# expected_filenames = generate_expected_filenames('nynov.csv')
-# todays_filenames = read_filenames_from_path('/Volumes/kycreative/_TEAM/Kurt/commageddon/files')
+expected_filenames = generate_expected_filenames('nynov.csv')
 
-# missing_files = todays_filenames - expected_filenames
+todays_filenames = read_filenames_from_path('./files')
 
-# print(len(todays_filenames), len(missing_files))
-# for file in expected_filenames:
-#     print(file)
+
+missing_files = expected_filenames - todays_filenames
+extra_files = todays_filenames - expected_filenames
+
+print(len(todays_filenames), len(missing_files))
+print('\nmissing files:')
+for file in missing_files:
+    print(file)
+print('\nextra files')
+for file in extra_files:
+    print(file)
