@@ -70,41 +70,62 @@ class SKU():
         self.alt_colors_clean = []
         self.alt_views = csv_line[12:16]
         self.shot_views = csv_line[25:34]
+        self.shot_suffix = [
+            ['R'],
+            ['ASTL'],
+            ['A1'],
+            ['A2'],
+            ['A3'],
+            ['A4'],
+            ['C2'],
+            ['C3'],
+            ['V'],
+        ]
         self.feature_colors_shot = csv_line[36]
-        self.alt_colors_shot = int(csv_line[37])
+        # self.alt_colors_shot = int(csv_line[37])
         self.shoot_date = csv_line[34]
+        self.generated_shots = []
         self.generated_filenames = []
 
         self.clean_alt_colors()
+        self.sync_shot_suffixes()
+        self.generate_shotlist()
         self.generate_filenames()
+
+    def sync_shot_suffixes(self):
+        for idx, shot in enumerate(self.shot_views):
+            self.shot_suffix[idx].append(shot)
+
+            
 
     def clean_alt_colors(self):
         for color in self.alt_colors_raw:
-            clean_color = re.sub(r'[\w]', '', clean_color)
+            clean_color = re.sub(r'[^\w]', '', color.upper())
             self.alt_colors_clean.append(clean_color)
 
+    def generate_shotlist(self):
+        filename_source = []
+        if self.feature_color != '':
+            filename_source.append(self.feature_color)
+        for color in self.alt_colors_clean:
+            if color != '':
+                filename_source.append(color)
+        for shot in self.shot_suffix:
+            if shot[1] != '':
+                filename_source.append(shot[0])
+        self.generated_shots = filename_source
+            
     def generate_filenames(self):
-        for view in self.shot_views[:-1]:
+        for shot in self.generated_shots:
             output = ''
-            if view == 'R':
-                if self.feature_color != '':
-                    output = '{}_{}.tif'.format(self.sku, self.feature_color)
-                else:
-                    output = '{}.tif'.format(self.sku)
-
-            elif view == 'C2'or view == 'C3':
-                pass
-
-            else:
-                output = '{}_{}.tif'.format(self.sku, view)
-
-            if output:
-                self.file_names.append(output)
-        #return self.file_names
+            if shot != 'R':
+                output = '{}_{}.tif'.format(self.sku, shot)
+            if output != '':
+                self.generated_filenames.append(output)
 
     def __str__(self):
-        return "{}, {}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors, self.shot_views, self.date)
-
+        # return "{}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors_clean, self.shot_suffix)
+        return '{} - {}'.format(self.sku, self.generated_filenames)
 
 def generate_expected_filenames(csv_path):
 
@@ -116,14 +137,19 @@ def generate_expected_filenames(csv_path):
         csv_list = [row for row in csvfile]
 
         for shot_sku in csv_list[3:]:
-            session_skus.append(SKU(shot_sku[7], shot_sku[10], shot_sku[11], shot_sku[25:34], shot_sku[34]))
+            session_skus.append(SKU(shot_sku))
 
         for sku in session_skus:
-            # if sku.file_names:
-            #     for filename in sku.file_names:
-            #         session_files.append(filename)
-            print('{} - {}'.format(sku.sku, sku.file_names))
+            print(sku)
+
+        # for sku in session_skus:
+        #     if sku.file_names:
+        #         for filename in sku.file_names:
+        #             session_files.append(filename)
+        #     print('{} - {}'.format(sku.sku, sku.file_names))
         # return set(session_files)
+
+generate_expected_filenames('nynov.csv')
 
 def read_filenames_from_path(path):
     filenames = []
@@ -132,8 +158,8 @@ def read_filenames_from_path(path):
             filenames.append(file)
     return set(filenames)
 
-expected_filenames = generate_expected_filenames('nynov.csv')
-todays_filenames = read_filenames_from_path('/Volumes/kycreative/_TEAM/Kurt/commageddon/files')
+# expected_filenames = generate_expected_filenames('nynov.csv')
+# todays_filenames = read_filenames_from_path('/Volumes/kycreative/_TEAM/Kurt/commageddon/files')
 
 # missing_files = todays_filenames - expected_filenames
 
