@@ -1,5 +1,6 @@
 *.csv
 filenames/
+files/
 ._*
 
 # Byte-compiled / optimized / DLL files

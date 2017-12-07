@@ -148,17 +148,26 @@ def generate_expected_filenames(csv_path):
             if shot_sku[7] != '':
                 session_skus.append(SKU(shot_sku))
 
-        for sku in session_skus:
-            print(sku)
-
         # for sku in session_skus:
-        #     if sku.file_names:
-        #         for filename in sku.file_names:
-        #             session_files.append(filename)
-        #     print('{} - {}'.format(sku.sku, sku.file_names))
-        # return set(session_files)
+        #     print(sku)
 
-generate_expected_filenames('nynov.csv')
+        for sku in session_skus:
+            if sku.generated_filenames:
+                for filename in sku.generated_filenames:
+                    session_files.append(filename)
+        print(len(session_files))
+        return set(session_files)
+
+        
+
+expected_files = generate_expected_filenames('nynov.csv')
+print(len(expected_files))
+
+# for file in expected_files:
+#     print(file)
+
+
+
 
 def read_filenames_from_path(path):
     filenames = []
