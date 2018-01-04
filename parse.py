@@ -148,6 +148,7 @@ def generate_expected_filenames(csv_path, turn_in_date):
             if shot_sku[7] != '':
                 if shot_sku[18] == turn_in_date:
                     session_skus.append(SKU(shot_sku))
+                # commented-out after date format was standardized
                 # elif shot_sku[18] == '12/27/2017':
                 #     session_skus.append(SKU(shot_sku))
                 else:
