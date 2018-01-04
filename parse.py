@@ -146,9 +146,9 @@ def generate_expected_filenames(csv_path):
 
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
-                if shot_sku[18] == '11/07/17':
+                if shot_sku[18] == '12/27/17':
                     session_skus.append(SKU(shot_sku))
-                elif shot_sku[18] == '11/7/2017':
+                elif shot_sku[18] == '12/27/2017':
                     session_skus.append(SKU(shot_sku))
                 else:
                     pass
@@ -172,10 +172,18 @@ def read_filenames_from_path(path):
             filenames.append(file)
     return set(filenames)
 
-expected_filenames = generate_expected_filenames('nynov.csv')
+def read_filenames_recursively(path):
+    filenames = []
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            if name[0] != '.':
+                filenames.append(name)
+    return set(filenames)
 
-todays_filenames = read_filenames_from_path('./files')
+expected_filenames = generate_expected_filenames('SAKS STILLS TURN IN - NEW YORK - DECEMBER 2017.csv')
 
+# todays_filenames = read_filenames_from_path('./files')
+todays_filenames = read_filenames_recursively('./12-27 TURN IN')
 
 missing_files = expected_filenames - todays_filenames
 extra_files = todays_filenames - expected_filenames
@@ -184,6 +192,6 @@ print(len(todays_filenames), len(missing_files))
 print('\nmissing files:')
 for file in missing_files:
     print(file)
-print('\nextra files')
+print('\npotentially extra files')
 for file in extra_files:
     print(file)
