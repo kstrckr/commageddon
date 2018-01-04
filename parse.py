@@ -135,7 +135,7 @@ class SKU():
         # return "{}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors_clean, self.shot_suffix)
         return '{} - {}'.format(self.sku, self.generated_filenames)
 
-def generate_expected_filenames(csv_path):
+def generate_expected_filenames(csv_path, turn_in_date):
 
     session_skus = []
     session_files = []
@@ -146,10 +146,10 @@ def generate_expected_filenames(csv_path):
 
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
-                if shot_sku[18] == '12/27/17':
+                if shot_sku[18] == turn_in_date:
                     session_skus.append(SKU(shot_sku))
-                elif shot_sku[18] == '12/27/2017':
-                    session_skus.append(SKU(shot_sku))
+                # elif shot_sku[18] == '12/27/2017':
+                #     session_skus.append(SKU(shot_sku))
                 else:
                     pass
 
@@ -180,7 +180,7 @@ def read_filenames_recursively(path):
                 filenames.append(name)
     return set(filenames)
 
-expected_filenames = generate_expected_filenames('SAKS STILLS TURN IN - NEW YORK - DECEMBER 2017.csv')
+expected_filenames = generate_expected_filenames('SAKS STILLS TURN IN - NEW YORK - DECEMBER 2017.csv', '12/27/2017')
 
 # todays_filenames = read_filenames_from_path('./files')
 todays_filenames = read_filenames_recursively('./12-27 TURN IN')
