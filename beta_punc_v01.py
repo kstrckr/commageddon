@@ -196,10 +196,10 @@ def parse_the_args():
     parser = argparse.ArgumentParser(
         usage='''Validates file names in a Turn In folder based on a TURN IN SHEET csv
 
-        Instructions: type 'python punc.py' into the terminal window, followed by a space. Then ...
-        1. Drag the Turn In date folder onto the terminal window
-        2. Drag the downloaded CSV File onto the terminal window
-        3. Type the TURN IN date to check, formatted DD/MM/YYYY, no quotes required. EX: 03/14/2018
+        Instructions: drag the beta_punc_v01.py file into the terminal window, followed by a space. Then ...
+        1. Drag the Turn In date folder onto the terminal window - no quotes required
+        2. Drag the downloaded CSV File onto the terminal window - no quotes required
+        3. Type the TURN IN date to check, formatted DD/MM/YYYY, no quotes required. EX: 03/14/2018 - no quotes requried
         '''
     )
     parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
