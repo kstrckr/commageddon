@@ -207,33 +207,34 @@ def parse_the_args():
     args = parser.parse_args()
     return args.path, args.csv, args.date
 
-turnin_folder_path, csv_path, turn_in_date = parse_the_args()
+if __name__ == '__main__':
+    turnin_folder_path, csv_path, turn_in_date = parse_the_args()
 
-#print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+turn_in_date+'\n')
+    #print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+turn_in_date+'\n')
 
-print('''
-Checking filenames in - {}
-CSV File - {}
-Turn In Date  - {}
-'''.format(turnin_folder_path, csv_path, turn_in_date))
+    print('''
+    Checking filenames in - {}
+    CSV File - {}
+    Turn In Date  - {}
+    '''.format(turnin_folder_path, csv_path, turn_in_date))
 
-expected_filenames = generate_expected_filenames(csv_path, turn_in_date)
+    expected_filenames = generate_expected_filenames(csv_path, turn_in_date)
 
-# todays_filenames = read_filenames_from_path('./files')
-todays_filenames = read_filenames_recursively(turnin_folder_path)
+    # todays_filenames = read_filenames_from_path('./files')
+    todays_filenames = read_filenames_recursively(turnin_folder_path)
 
-missing_files = expected_filenames - todays_filenames
-extra_files = todays_filenames - expected_filenames
+    missing_files = expected_filenames - todays_filenames
+    extra_files = todays_filenames - expected_filenames
 
-print('''{} Files expected according to the Turn In Sheet
-{} Files checked in Turn In folder
-{} Missing files
-{} Possibly extra files found in Turn In folder
-'''.format(len(expected_filenames), len(todays_filenames), len(missing_files), len(extra_files)))
+    print('''    {} Files expected according to the Turn In Sheet
+    {} Files checked in Turn In folder
+    {} Missing files
+    {} Possibly extra files found in Turn In folder
+    '''.format(len(expected_filenames), len(todays_filenames), len(missing_files), len(extra_files)))
 
-print('missing files:')
-for file in missing_files:
-    print('\t'+file)
-print('\npotentially extra files:')
-for file in extra_files:
-    print('\t'+file)
+    print('\tmissing files:')
+    for file in missing_files:
+        print('\t\t'+file)
+    print('\n\tpotentially extra files:')
+    for file in extra_files:
+        print('\t\t'+file)
