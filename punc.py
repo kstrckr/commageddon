@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Pre Upload Name Checker - P.U.N.C.
 Kurt Strecker
