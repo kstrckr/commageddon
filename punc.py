@@ -1,3 +1,10 @@
+'''
+Pre Upload Name Checker - P.U.N.C.
+Kurt Strecker
+v 0.1 - beta version ready for on set testing
+updated 01/04/2018
+'''
+
 import csv
 import re
 import os
@@ -179,16 +186,19 @@ def read_filenames_recursively(path):
     for root, dirs, files in os.walk(path):
         for name in files:
             if name[0] != '.':
-                filenames.append(name)
+                if name[-4:].upper() != '.MOV':
+                    filenames.append(name)
     return set(filenames)
 
 def parse_the_args():
     parser = argparse.ArgumentParser(
-        usage='''Validates file names in a turn in folder based on a TURN IN SHEET csv
-        Instructions:
+        usage='''Validates file names in a Turn In folder based on a TURN IN SHEET csv
+
+        Instructions: type 'python punc.py' into the terminal window, followed by a space. Then ...
         1. Drag the Turn In date folder onto the terminal window
         2. Drag the downloaded CSV File onto the terminal window
-        3. Type the TURN IN date to check, formatted DD/MM/YYYY, no quotes required. EX: 03/14/2018'''
+        3. Type the TURN IN date to check, formatted DD/MM/YYYY, no quotes required. EX: 03/14/2018
+        '''
     )
     parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
     parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
@@ -199,7 +209,13 @@ def parse_the_args():
 
 turnin_folder_path, csv_path, turn_in_date = parse_the_args()
 
-print('\nChecking filenames in - '+turnin_folder_path, '\nChecking against TURN-IN DATE - '+turn_in_date, '\nCSV FILE - '+csv_path)
+#print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+turn_in_date+'\n')
+
+print('''
+Checking filenames in - {}
+CSV File - {}
+Turn In Date  - {}
+'''.format(turnin_folder_path, csv_path, turn_in_date))
 
 expected_filenames = generate_expected_filenames(csv_path, turn_in_date)
 
@@ -209,8 +225,13 @@ todays_filenames = read_filenames_recursively(turnin_folder_path)
 missing_files = expected_filenames - todays_filenames
 extra_files = todays_filenames - expected_filenames
 
-print(len(todays_filenames), len(missing_files))
-print('\nmissing files:')
+print('''{} Files expected according to the Turn In Sheet
+{} Files checked in Turn In folder
+{} Missing files
+{} Possibly extra files found in Turn In folder
+'''.format(len(expected_filenames), len(todays_filenames), len(missing_files), len(extra_files)))
+
+print('missing files:')
 for file in missing_files:
     print('\t'+file)
 print('\npotentially extra files:')
