@@ -199,12 +199,12 @@ def parse_the_args():
         Instructions: drag the beta_punc_v01.py file into the terminal window, followed by a space. Then ...
         1. Drag the Turn In date folder onto the terminal window - no quotes required
         2. Drag the downloaded CSV File onto the terminal window - no quotes required
-        3. Type the TURN IN date to check, formatted DD/MM/YYYY, no quotes required. EX: 03/14/2018 - no quotes requried
+        3. Type the TURN IN date to check, formatted MM/DD/YYYY, no quotes required. EX: 03/14/2018 - no quotes requried
         '''
     )
     parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
     parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
-    parser.add_argument('date', type=str, help='the turn-in date to validate, formatted DD/MM/YYYY')
+    parser.add_argument('date', type=str, help='the turn-in date to validate, formatted MM/DD/YYYY')
 
     args = parser.parse_args()
     return args.path, args.csv, args.date
