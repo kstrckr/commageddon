@@ -182,10 +182,29 @@ def read_filenames_recursively(path):
                 filenames.append(name)
     return set(filenames)
 
-expected_filenames = generate_expected_filenames('SAKS STILLS TURN IN - NEW YORK - DECEMBER 2017.csv', '12/27/2017')
+def parse_the_args():
+    parser = argparse.ArgumentParser(
+        usage='''Validates file names in a turn in folder based on a TURN IN SHEET csv
+        Instructions:
+        1. Drag the Turn In date folder onto the terminal window
+        2. Drag the downloaded CSV File onto the terminal window
+        3. Type the TURN IN date to check, formatted DD/MM/YYYY, no quotes required. EX: 03/14/2018'''
+    )
+    parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
+    parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
+    parser.add_argument('date', type=str, help='the turn-in date to validate, formatted DD/MM/YYYY')
+
+    args = parser.parse_args()
+    return args.path, args.csv, args.date
+
+turnin_folder_path, csv_path, turn_in_date = parse_the_args()
+
+print('\nChecking filenames in - '+turnin_folder_path, '\nChecking against TURN-IN DATE - '+turn_in_date, '\nCSV FILE - '+csv_path)
+
+expected_filenames = generate_expected_filenames(csv_path, turn_in_date)
 
 # todays_filenames = read_filenames_from_path('./files')
-todays_filenames = read_filenames_recursively('./12-27 TURN IN')
+todays_filenames = read_filenames_recursively(turnin_folder_path)
 
 missing_files = expected_filenames - todays_filenames
 extra_files = todays_filenames - expected_filenames
