@@ -192,7 +192,7 @@ extra_files = todays_filenames - expected_filenames
 print(len(todays_filenames), len(missing_files))
 print('\nmissing files:')
 for file in missing_files:
-    print(file)
-print('\npotentially extra files')
+    print('\t'+file)
+print('\npotentially extra files:')
 for file in extra_files:
-    print(file)
+    print('\t'+file)
