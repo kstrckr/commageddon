@@ -5,11 +5,14 @@ Pre Upload Name Checker - P.U.N.C.
 Kurt Strecker
 
 updated 01/07/2018
-v 0.1.1 - beta version ready for on set testing
-update notes
+v 0.1.2 - beta version ready for on set testing
+update notes 1.1
     1. added optional -s flag at end of terminal arguments to enable seraching CSV by shoot date
     2. simplified argument for command line date lookup to accept MM/DD or even just MMDD for faster typing
     3. added some additional reportout information for missing files
+
+update notes 1.2
+    1. added a -a flag, to be followed by a date, to check for Shoot date AND a different Turn in date
 '''
 
 import csv
@@ -151,7 +154,7 @@ class SKU():
         # return "{}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors_clean, self.shot_suffix)
         return '{} - {}'.format(self.sku, self.generated_filenames)
 
-def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
+def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_shoot_date):
 
     session_skus = []
     session_files = []
@@ -162,7 +165,7 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
 
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
-                if not lookup_by_shootdate:
+                if not lookup_by_shootdate and not and_shoot_date:
                     if shot_sku[18][:5].replace('/','') == lookup_date[:4]:
                         session_skus.append(SKU(shot_sku))
                     # commented-out after date format was standardized
@@ -170,9 +173,14 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
                     #     session_skus.append(SKU(shot_sku))
                     else:
                         pass
-                else:
+                elif not and_shoot_date:
                     cleaned_sku_shoot_date = shot_sku[34].replace('-','').replace('/','')
                     if cleaned_sku_shoot_date == lookup_date[:4]:
+                        session_skus.append(SKU(shot_sku))
+                
+                else:
+                    cleaned_sku_shoot_date = shot_sku[34].replace('-','').replace('/','')
+                    if shot_sku[18][:5].replace('/','') == lookup_date[:4] and cleaned_sku_shoot_date == and_shoot_date[:4]:
                         session_skus.append(SKU(shot_sku))
 
 
@@ -220,12 +228,13 @@ def parse_the_args():
     parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
     parser.add_argument('date', type=str, help='the turn-in date to validate, formatted MM/DD/YYYY')
     parser.add_argument('-s', action='store_true')
+    parser.add_argument('-a', '--andshootdate', type=str)
 
     args = parser.parse_args()
-    return args.path, args.csv, args.date.replace('/',''), args.s
+    return args.path, args.csv, args.date.replace('/',''), args.s, args.andshootdate
 
 if __name__ == '__main__':
-    turnin_folder_path, csv_path, lookup_date, lookup_mode = parse_the_args()
+    turnin_folder_path, csv_path, lookup_date, lookup_mode, and_shoot_date = parse_the_args()
 
     #print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+lookup_date+'\n')
 
@@ -234,9 +243,10 @@ if __name__ == '__main__':
     CSV File - {}
     Turn In Date  - {}
     Lookup by Shoot Date - {}
-    '''.format(turnin_folder_path, csv_path, lookup_date[:4], lookup_mode))
+    Lookup by Shoto Date AND Turn In Date - {}
+    '''.format(turnin_folder_path, csv_path, lookup_date[:4], lookup_mode, and_shoot_date))
 
-    expected_filenames = generate_expected_filenames(csv_path, lookup_date, lookup_mode)
+    expected_filenames = generate_expected_filenames(csv_path, lookup_date, lookup_mode, and_shoot_date)
 
     # todays_filenames = read_filenames_from_path('./files')
     todays_filenames = read_filenames_recursively(turnin_folder_path)
