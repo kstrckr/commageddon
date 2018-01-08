@@ -3,8 +3,12 @@
 '''
 Pre Upload Name Checker - P.U.N.C.
 Kurt Strecker
-v 0.1 - beta version ready for on set testing
-updated 01/05/2018
+
+updated 01/07/2018
+v 0.1.1 - beta version ready for on set testing
+update notes
+    1. added optional -s flag at end of terminal arguments to enable seraching CSV by shoot date
+    2. simplified argument for command line date lookup to accept MM/DD or even just MMDD for faster typing
 '''
 
 import csv
@@ -157,7 +161,7 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
                 if not lookup_by_shootdate:
-                    if shot_sku[18] == lookup_date:
+                    if shot_sku[18][:5].replace('/','') == lookup_date[:4]:
                         session_skus.append(SKU(shot_sku))
                     # commented-out after date format was standardized
                     # elif shot_sku[18] == '12/27/2017':
@@ -165,9 +169,8 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
                     else:
                         pass
                 else:
-                    replace_date = lookup_date.replace('/','')
-                    replace_shootdate = shot_sku[34].replace('-','').replace('/','')
-                    if replace_shootdate == replace_date[:4]:
+                    cleaned_sku_shoot_date = shot_sku[34].replace('-','').replace('/','')
+                    if cleaned_sku_shoot_date == lookup_date[:4]:
                         session_skus.append(SKU(shot_sku))
 
 
@@ -189,13 +192,13 @@ def read_filenames_from_path(path):
             filenames.append(file)
     return set(filenames)
 
-def read_filenames_recursively(path):
+def read_filenames_recursively(path, mode=False):
     filenames = []
     for root, dirs, files in os.walk(path):
-        for name in files:
-            if name[0] != '.':
-                if name[-4:].upper() != '.MOV':
-                    filenames.append(name)
+        for file in files:
+            if file[0] != '.':
+                if file[-4:].upper() != '.MOV':
+                    filenames.append(file)
     return set(filenames)
 
 def parse_the_args():
@@ -205,7 +208,7 @@ def parse_the_args():
         Instructions: drag the beta_punc_v01.py file into the terminal window, followed by a space. Then ...
         1. Drag the Turn In date folder onto the terminal window - no quotes required
         2. Drag the downloaded CSV File onto the terminal window - no quotes required
-        3. Type the TURN IN date to check, formatted MM/DD/YYYY, no quotes required. EX: 03/14/2018 - no quotes requried
+        3. Type the TURN IN date to check, formatted MM/DD/YYYY, MM/DD, or even just MMDD. no quotes required. EX: 03/14/2018 or 03/14 or 0314 - no quotes requried
         '''
     )
     parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
@@ -214,7 +217,7 @@ def parse_the_args():
     parser.add_argument('-s', action='store_true')
 
     args = parser.parse_args()
-    return args.path, args.csv, args.date, args.s
+    return args.path, args.csv, args.date.replace('/',''), args.s
 
 if __name__ == '__main__':
     turnin_folder_path, csv_path, lookup_date, lookup_mode = parse_the_args()
@@ -226,7 +229,7 @@ if __name__ == '__main__':
     CSV File - {}
     Turn In Date  - {}
     Lookup by Shoot Date - {}
-    '''.format(turnin_folder_path, csv_path, lookup_date, lookup_mode))
+    '''.format(turnin_folder_path, csv_path, lookup_date[:4], lookup_mode))
 
     expected_filenames = generate_expected_filenames(csv_path, lookup_date, lookup_mode)
 
