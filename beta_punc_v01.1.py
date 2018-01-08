@@ -184,8 +184,8 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
                 sku_shoot_date = sku.shoot_date
                 sku_turnin_date = sku.turnin_date
                 for filename in sku.generated_filenames:
-                    filename_output = '{} \n\t\t\tTurn-In {} \n\t\t\tShot On {} \n'.format(filename, sku_turnin_date[:5], sku.shoot_date.replace('-','/'))
-                    session_files.append(filename_output)
+                    #filename_output = '{} \n\t\t\tTurn-In {} \n\t\t\tShot On {} \n'.format(filename, sku_turnin_date[:5], sku.shoot_date.replace('-','/'))
+                    session_files.append(filename)
         return set(session_files)
 
 
