@@ -145,7 +145,7 @@ class SKU():
         # return "{}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors_clean, self.shot_suffix)
         return '{} - {}'.format(self.sku, self.generated_filenames)
 
-def generate_expected_filenames(csv_path, turn_in_date):
+def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
 
     session_skus = []
     session_files = []
@@ -156,13 +156,19 @@ def generate_expected_filenames(csv_path, turn_in_date):
 
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
-                if shot_sku[18] == turn_in_date:
-                    session_skus.append(SKU(shot_sku))
-                # commented-out after date format was standardized
-                # elif shot_sku[18] == '12/27/2017':
-                #     session_skus.append(SKU(shot_sku))
+                if not lookup_by_shootdate:
+                    if shot_sku[18] == lookup_date:
+                        session_skus.append(SKU(shot_sku))
+                    # commented-out after date format was standardized
+                    # elif shot_sku[18] == '12/27/2017':
+                    #     session_skus.append(SKU(shot_sku))
+                    else:
+                        pass
                 else:
-                    pass
+                    replace_date = lookup_date.replace('/','')
+                    replace_shootdate = shot_sku[34].replace('-','').replace('/','')
+                    if replace_shootdate == replace_date[:4]:
+                        session_skus.append(SKU(shot_sku))
 
 
         # for sku in session_skus:
@@ -205,22 +211,24 @@ def parse_the_args():
     parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
     parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
     parser.add_argument('date', type=str, help='the turn-in date to validate, formatted MM/DD/YYYY')
+    parser.add_argument('-s', action='store_true')
 
     args = parser.parse_args()
-    return args.path, args.csv, args.date
+    return args.path, args.csv, args.date, args.s
 
 if __name__ == '__main__':
-    turnin_folder_path, csv_path, turn_in_date = parse_the_args()
+    turnin_folder_path, csv_path, lookup_date, lookup_mode = parse_the_args()
 
-    #print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+turn_in_date+'\n')
+    #print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+lookup_date+'\n')
 
     print('''
     Checking filenames in - {}
     CSV File - {}
     Turn In Date  - {}
-    '''.format(turnin_folder_path, csv_path, turn_in_date))
+    Lookup by Shoot Date - {}
+    '''.format(turnin_folder_path, csv_path, lookup_date, lookup_mode))
 
-    expected_filenames = generate_expected_filenames(csv_path, turn_in_date)
+    expected_filenames = generate_expected_filenames(csv_path, lookup_date, lookup_mode)
 
     # todays_filenames = read_filenames_from_path('./files')
     todays_filenames = read_filenames_recursively(turnin_folder_path)
