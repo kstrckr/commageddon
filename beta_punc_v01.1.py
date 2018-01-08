@@ -9,6 +9,7 @@ v 0.1.1 - beta version ready for on set testing
 update notes
     1. added optional -s flag at end of terminal arguments to enable seraching CSV by shoot date
     2. simplified argument for command line date lookup to accept MM/DD or even just MMDD for faster typing
+    3. added some additional reportout information for missing files
 '''
 
 import csv
@@ -83,6 +84,7 @@ class SKU():
         self.alt_colors_raw = csv_line[11].split(',')
         self.alt_colors_clean = []
         self.alt_views = csv_line[12:16]
+        self.turnin_date = csv_line[18]
         self.shot_views = csv_line[25:34]
         self.shot_suffix = [
             ['R'],
@@ -179,8 +181,11 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate):
 
         for sku in session_skus:
             if sku.generated_filenames:
+                sku_shoot_date = sku.shoot_date
+                sku_turnin_date = sku.turnin_date
                 for filename in sku.generated_filenames:
-                    session_files.append(filename)
+                    filename_output = '{} \n\t\t\tTurn-In {} \n\t\t\tShot On {} \n'.format(filename, sku_turnin_date[:5], sku.shoot_date.replace('-','/'))
+                    session_files.append(filename_output)
         return set(session_files)
 
 
