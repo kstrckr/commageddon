@@ -13,12 +13,19 @@ update notes 1.1
 
 update notes 1.2
     1. added a -a flag, to be followed by a date, to check for Shoot date AND a different Turn in date
+
+update notes 1.3
+    1. added a function clean_turn_in_date() to fix an formatting errors for Turn In Date column of the turn in sheet 
+    to deal with inconsistancies eg: sometimes it's input as 01/05/2017 and sometimes 1/5/2017
+    2. added a function to clean shoot-dates clean_shoot_date() to account for photographer variation in shoot date entries
+    ex 1-15, 1/15, and 01/15 are all commonly seen.
 '''
 
 import csv
 import re
 import os
 import argparse
+import datetime
 
 # (0, 'CATEGORY')
 # (1, 'Pictures')
@@ -110,12 +117,11 @@ class SKU():
         self.sync_shot_suffixes()
         self.generate_shotlist()
         self.generate_filenames()
+        # self.clean_turn_in_date()
 
     def sync_shot_suffixes(self):
         for idx, shot in enumerate(self.shot_views):
             self.shot_suffix[idx].append(shot)
-
-            
 
     def clean_alt_colors(self):
         for color in self.alt_colors_raw:
@@ -150,9 +156,28 @@ class SKU():
             if output != '':
                 self.generated_filenames.append(output)
 
+    # def clean_turn_in_date(self):
+    #     dirty_date = self.turnin_date
+    #     clean_date = datetime.datetime.strptime(dirty_date, '%d/%m/%Y').strftime('%d/%m/%Y')
+    #     self.turnin_date = clean_date
+
     def __str__(self):
         # return "{}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors_clean, self.shot_suffix)
         return '{} - {}'.format(self.sku, self.generated_filenames)
+
+def clean_turn_in_date(input_date):
+    return datetime.datetime.strptime(input_date, '%m/%d/%Y').strftime('%m/%d/%Y')
+
+def clean_shoot_date(input_date):
+    date_pattern = re.compile(r'(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
+    parsed_date = date_pattern.match(input_date)
+    month, day = parsed_date.groups()
+    if len(month) == 1:
+        month = '0' + month
+    if len(day) == 1:
+        day = '0' + day
+    output = '{}-{}'.format(month, day)
+    return output
 
 def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_shoot_date):
 
@@ -165,6 +190,9 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_
 
         for shot_sku in csv_list[3:]:
             if shot_sku[7] != '':
+                shot_sku[18] = clean_turn_in_date(shot_sku[18])
+                if shot_sku[34] != '':
+                    shot_sku[34] = clean_shoot_date(shot_sku[34])
                 if not lookup_by_shootdate and not and_shoot_date:
                     if shot_sku[18][:5].replace('/','') == lookup_date[:4]:
                         session_skus.append(SKU(shot_sku))
