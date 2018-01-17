@@ -117,7 +117,6 @@ class SKU():
         self.sync_shot_suffixes()
         self.generate_shotlist()
         self.generate_filenames()
-        # self.clean_turn_in_date()
 
     def sync_shot_suffixes(self):
         for idx, shot in enumerate(self.shot_views):
@@ -156,13 +155,7 @@ class SKU():
             if output != '':
                 self.generated_filenames.append(output)
 
-    # def clean_turn_in_date(self):
-    #     dirty_date = self.turnin_date
-    #     clean_date = datetime.datetime.strptime(dirty_date, '%d/%m/%Y').strftime('%d/%m/%Y')
-    #     self.turnin_date = clean_date
-
     def __str__(self):
-        # return "{}, {}, {}, {}".format(self.sku, self.feature_color, self.alt_colors_clean, self.shot_suffix)
         return '{} - {}'.format(self.sku, self.generated_filenames)
 
 def clean_turn_in_date(input_date):
