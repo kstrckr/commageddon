@@ -249,7 +249,7 @@ def parse_the_args():
     parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
     parser.add_argument('date', type=str, help='the turn-in date to validate, formatted MM/DD/YYYY')
     parser.add_argument('-s', action='store_true')
-    parser.add_argument('-a', '--andshootdate', type=str)
+    parser.add_argument('-a', '--andshootdate', nargs='+', type=str)
 
     args = parser.parse_args()
     return args.path, args.csv, args.date.replace('/',''), args.s, args.andshootdate
