@@ -4,7 +4,7 @@
 Pre Upload Name Checker - P.U.N.C.
 Kurt Strecker
 
-updated 01/07/2018
+updated 01/21/2018
 v 0.1.2 - beta version ready for on set testing
 update notes 1.1
     1. added optional -s flag at end of terminal arguments to enable seraching CSV by shoot date
@@ -19,6 +19,10 @@ update notes 1.3
     to deal with inconsistancies eg: sometimes it's input as 01/05/2017 and sometimes 1/5/2017
     2. added a function to clean shoot-dates clean_shoot_date() to account for photographer variation in shoot date entries
     ex 1-15, 1/15, and 01/15 are all commonly seen.
+
+update notes 1.4
+    1. added ability to optionally add multiple shoot dates to lookup after the -a flag when called in the command line. It checks individual dates,
+    not a range, ex 0110 and 0112 will check those two dates, but not 0111
 '''
 
 import csv
@@ -174,6 +178,7 @@ def clean_shoot_date(input_date):
 
 def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_shoot_date):
 
+    and_shoot_date_set = set(and_shoot_date)
     session_skus = []
     session_files = []
 
@@ -201,7 +206,7 @@ def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_
                 
                 else:
                     cleaned_sku_shoot_date = shot_sku[34].replace('-','').replace('/','')
-                    if shot_sku[18][:5].replace('/','') == lookup_date[:4] and cleaned_sku_shoot_date == and_shoot_date[:4]:
+                    if shot_sku[18][:5].replace('/','') == lookup_date[:4] and cleaned_sku_shoot_date in and_shoot_date_set:
                         session_skus.append(SKU(shot_sku))
 
 
