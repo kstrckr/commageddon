@@ -248,13 +248,18 @@ def parse_the_args():
         1. Drag the Turn In date folder onto the terminal window - no quotes required
         2. Drag the downloaded CSV File onto the terminal window - no quotes required
         3. Type the TURN IN date to check, formatted MM/DD/YYYY, MM/DD, or even just MMDD. no quotes required. EX: 03/14/2018 or 03/14 or 0314 - no quotes requried
+        
+        OPTIONS:
+        -s will use the entered date to lookup by shoot date INSTEAD of turn in date
+        -a followed by ONE or MORE dates formatted MMDD will look for all of the shoot dates assosciated with the turn in date
+        EX: 0110 -a 0109 0110 0111 will return expected images for TURN IN DATE 0110, and all images shot on the three dates 0109, 0110, 011
         '''
     )
     parser.add_argument('path', type=str, help='the path to the TURN IN directory you wish to validate')
     parser.add_argument('csv', type=str, help='the path to the downloaded CSV file')
-    parser.add_argument('date', type=str, help='the turn-in date to validate, formatted MM/DD/YYYY')
-    parser.add_argument('-s', action='store_true')
-    parser.add_argument('-a', '--andshootdate', nargs='+', type=str)
+    parser.add_argument('date', type=str, help='the turn-in date to validate, formatted MMDD')
+    parser.add_argument('-s', action='store_true', help='when used will look for SHOOT DATE equal to entered date instead of TURN IN DATE')
+    parser.add_argument('-a', '--andshootdate', nargs='+', type=str, help='when set, and followed by ONE or MORE dates formatted MMDD will look for images with matching TURN IN and ALL shoot dates')
 
     args = parser.parse_args()
     return args.path, args.csv, args.date.replace('/',''), args.s, args.andshootdate
@@ -265,11 +270,11 @@ if __name__ == '__main__':
     #print('\nChecking filenames in - '+turnin_folder_path, '\nCSV FILE - '+csv_path, '\nChecking against TURN-IN DATE - '+lookup_date+'\n')
 
     print('''
-    Checking filenames in - {}
-    CSV File - {}
-    Turn In Date  - {}
-    Lookup by Shoot Date - {}
-    Lookup by Shoto Date AND Turn In Date - {}
+    Checking filenames in:\n\t {}
+    CSV File:\n\t {}
+    Turn In Date - {}
+    Lookup by Shoot Date ONLY - {}
+    Lookup by Shoto Date/s AND Turn In Date - {}
     '''.format(turnin_folder_path, csv_path, lookup_date[:4], lookup_mode, and_shoot_date))
 
     expected_filenames = generate_expected_filenames(csv_path, lookup_date, lookup_mode, and_shoot_date)
