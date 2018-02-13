@@ -166,7 +166,7 @@ def clean_turn_in_date(input_date):
     return datetime.datetime.strptime(input_date, '%m/%d/%Y').strftime('%m/%d/%Y')
 
 def clean_shoot_date(input_date):
-    date_pattern = re.compile(r'(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
+    date_pattern = re.compile(r'(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2}).*')
     parsed_date = date_pattern.match(input_date)
     month, day = parsed_date.groups()
     if len(month) == 1:
