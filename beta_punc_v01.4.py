@@ -163,17 +163,33 @@ class SKU():
         return '{} - {}'.format(self.sku, self.generated_filenames)
 
 def clean_turn_in_date(input_date):
-    return datetime.datetime.strptime(input_date, '%m/%d/%Y').strftime('%m/%d/%Y')
+    # return datetime.datetime.strptime(input_date, '%m/%d/%Y').strftime('%m/%d/%Y')
+    date_pattern = re.compile(r'^(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
+    parsed_date = date_pattern.match(input_date)
+    if parsed_date:    
+        month, day = parsed_date.groups()
+        if len(month) == 1:
+            month = '0' + month
+        if len(day) == 1:
+            day = '0' + day
+        output = '{}-{}'.format(month, day)
+    else: 
+        output = '00-00'
+    return output
+    
 
 def clean_shoot_date(input_date):
-    date_pattern = re.compile(r'(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2}).*')
+    date_pattern = re.compile(r'^(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
     parsed_date = date_pattern.match(input_date)
-    month, day = parsed_date.groups()
-    if len(month) == 1:
-        month = '0' + month
-    if len(day) == 1:
-        day = '0' + day
-    output = '{}-{}'.format(month, day)
+    if parsed_date:    
+        month, day = parsed_date.groups()
+        if len(month) == 1:
+            month = '0' + month
+        if len(day) == 1:
+            day = '0' + day
+        output = '{}-{}'.format(month, day)
+    else: 
+        output = '00-00'
     return output
 
 def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_shoot_date):
