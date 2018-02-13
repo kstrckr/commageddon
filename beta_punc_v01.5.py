@@ -4,7 +4,7 @@
 Pre Upload Name Checker - P.U.N.C.
 Kurt Strecker
 
-updated 01/21/2018
+updated 02/12/2018
 v 0.1.2 - beta version ready for on set testing
 update notes 1.1
     1. added optional -s flag at end of terminal arguments to enable seraching CSV by shoot date
@@ -23,6 +23,9 @@ update notes 1.3
 update notes 1.4
     1. added ability to optionally add multiple shoot dates to lookup after the -a flag when called in the command line. It checks individual dates,
     not a range, ex 0110 and 0112 will check those two dates, but not 0111
+
+update notes 1.5
+    1. tweaked clean_shoot and clean_turnin date functions to not crash when non-dates or mis-formatted data is found in the CSV
 '''
 
 import csv
@@ -164,33 +167,35 @@ class SKU():
 
 def clean_turn_in_date(input_date):
     # return datetime.datetime.strptime(input_date, '%m/%d/%Y').strftime('%m/%d/%Y')
-    date_pattern = re.compile(r'^(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
-    parsed_date = date_pattern.match(input_date)
-    if parsed_date:    
+    try:
+        date_pattern = re.compile(r'^(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
+        parsed_date = date_pattern.match(input_date)
         month, day = parsed_date.groups()
         if len(month) == 1:
             month = '0' + month
         if len(day) == 1:
             day = '0' + day
         output = '{}-{}'.format(month, day)
-    else: 
-        output = '00-00'
-    return output
+        return output
+
+    except AttributeError:
+        print('Formatting error in Turn-In column, please fix, download CSV and try again\n\n')
     
 
 def clean_shoot_date(input_date):
-    date_pattern = re.compile(r'^(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
-    parsed_date = date_pattern.match(input_date)
-    if parsed_date:    
+    try:
+        date_pattern = re.compile(r'^(?P<month>[\d]{1,2})\W+(?P<day>[\d]{1,2})')
+        parsed_date = date_pattern.match(input_date)
         month, day = parsed_date.groups()
         if len(month) == 1:
             month = '0' + month
         if len(day) == 1:
             day = '0' + day
         output = '{}-{}'.format(month, day)
-    else: 
-        output = '00-00'
-    return output
+        return output
+
+    except AttributeError:
+        print('Formatting error in Shoot Date column, please fix, download CSV and try again\n\n')
 
 def generate_expected_filenames(csv_path, lookup_date, lookup_by_shootdate, and_shoot_date):
 
